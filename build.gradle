@@ -62,15 +62,15 @@ publishing {
 			url = uri("https://maven.pkg.github.com/Sitrica/SourCore")
 			credentials {
 				username = 'Sitrica'
-				password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_PASSWORD")
+				password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_PACKAGES_KEY")
 			}
 		}
 	}
 	publications {
 		gpr(MavenPublication) {
 			version = project.property("version")
-			groupId = 'com.sitrica.core'
-			artifactId = 'SourCore'
+			groupId = 'com.sitrica'
+			artifactId = 'core'
 			from(components.java)
 		}
 	}
