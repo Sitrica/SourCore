@@ -1,0 +1,98 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+apply plugin: 'maven-publish'
+apply plugin: 'java-library'
+apply plugin: 'eclipse'
+
+jar.archiveName = project.name + '.jar'
+
+configurations {
+	shade
+	compile.extendsFrom shade
+}
+
+repositories {
+	mavenCentral()
+	jcenter()
+
+	// Spigot
+	maven {
+		url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+	}
+
+	// Bungeecord
+	maven {
+		url "https://oss.sonatype.org/content/repositories/snapshots/"
+	}
+
+	// HolographicDisplays
+	maven {
+		url 'https://ci.filoghost.me/plugin/repository/everything/'
+	}
+
+	maven {
+		url 'https://jitpack.io'
+	}
+
+}
+
+dependencies {
+
+	// HolographicDisplays
+	implementation (group: 'com.gmail.filoghost.holographicdisplays', name: 'holographicdisplays-plugin', version: '2.3.2') {
+		exclude group: 'org.bstats', module: 'bstats-bukkit-lite'
+	}
+
+	// Spigot
+	implementation (group: 'org.spigotmc', name: 'spigot-api', version: '1.14.4-R0.1-SNAPSHOT')
+
+	// Netty
+	implementation (group: 'io.netty', name: 'netty-all', version: '4.1.27.Final')
+
+	// Vault
+	implementation (group: 'com.github.MilkBowl', name: 'VaultAPI', version: '1.7')
+
+	shade fileTree(dir: 'libraries', include: '*.jar')
+
+}
+
+publishing {
+	repositories {
+		maven {
+			name = "SourCore"
+			url = uri("https://maven.pkg.github.com/Sitrica/SourCore")
+			credentials {
+				username = 'Sitrica'
+				password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_PASSWORD")
+			}
+		}
+	}
+	publications {
+		gpr(MavenPublication) {
+			version = project.property("version")
+			groupId = 'com.sitrica.core'
+			artifactId = 'SourCore'
+			from(components.java)
+		}
+	}
+}
+
+configurations {
+	runtime.exclude group: 'org.bstats', module: 'bstats-bukkit-lite'
+}
+
+processResources {
+	from (sourceSets.main.resources.srcDirs) {
+		filter ReplaceTokens, tokens: ["version": project.property("version")]
+		include '**/*.yml'
+	}
+}
+
+jar {
+	configurations.shade.each { dep ->
+		from (project.zipTree(dep)) {
+			exclude '**/*.php'
+			exclude '**/*.yml'
+			exclude 'META-INF', 'META-INF/**'
+		}
+	}
+}
