@@ -10,12 +10,14 @@ import com.sitrica.core.messaging.Formatting;
 
 public abstract class SourPlugin extends JavaPlugin {
 
+	private final String[] managerPackages;
 	private final String prefix;
 
 	/**
 	 * @param prefix Define the default prefix of the plugin.
 	 */
-	public SourPlugin(String prefix) {
+	public SourPlugin(String prefix, String... managerPackages) {
+		this.managerPackages = managerPackages;
 		this.prefix = prefix;
 	}
 
@@ -36,7 +38,14 @@ public abstract class SourPlugin extends JavaPlugin {
 			consoleMessage("&b" + string);
 	}
 
-	/* 
+	/**
+	 * @return The package names where managers exist to be registered.
+	 */
+	public String[] getManagerPackages() {
+		return managerPackages;
+	}
+
+	/** 
 	 * @return The default string prefix of the plugin.
 	 */
 	public String getPrefix() {
