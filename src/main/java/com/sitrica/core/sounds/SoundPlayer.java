@@ -4,21 +4,38 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
+
+import com.sitrica.core.SourPlugin;
 
 public class SoundPlayer {
 
 	private final Set<SourSound> sounds = new HashSet<>();
-	private final JavaPlugin instance;
+	private final SourPlugin instance;
 
-	public SoundPlayer(JavaPlugin instance, ConfigurationSection section) {
+	public SoundPlayer(SourPlugin instance, String node) {
+		this.instance = instance;
+		Optional<FileConfiguration> configuration = instance.getConfiguration("sounds");
+		if (!configuration.isPresent())
+			return;
+		ConfigurationSection section = configuration.get().getConfigurationSection(node);
+		if (!section.getBoolean("enabled", true))
+			return;
+		section = section.getConfigurationSection("sounds");
+		for (String key : section.getKeys(false)) {
+			this.sounds.add(new SourSound(section.getConfigurationSection(key), "CLICK"));
+		}
+	}
+
+	public SoundPlayer(SourPlugin instance, ConfigurationSection section) {
 		this.instance = instance;
 		if (!section.getBoolean("enabled", true))
 			return;
@@ -28,7 +45,7 @@ public class SoundPlayer {
 		}
 	}
 
-	public SoundPlayer(JavaPlugin instance, Collection<SourSound> sounds) {
+	public SoundPlayer(SourPlugin instance, Collection<SourSound> sounds) {
 		this.sounds.addAll(sounds);
 		this.instance = instance;
 	}
