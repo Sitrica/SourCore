@@ -1,4 +1,4 @@
-# Sour Core - v1.0.0
+# Sour Core
 The main core of Sitrica resources.
 
 ## Compiling
