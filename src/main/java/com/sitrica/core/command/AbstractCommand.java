@@ -9,11 +9,13 @@ import com.sitrica.core.messaging.Formatting;
 public abstract class AbstractCommand {
 
 	private final FileConfiguration messages;
+	protected final SourPlugin instance;
 	private final String[] commands;
 	private final boolean console;
 
 	protected AbstractCommand(SourPlugin instance, boolean console, String... commands) {
 		this.messages = instance.getConfiguration("messages").get();
+		this.instance = instance;
 		this.commands = commands;
 		this.console = console;
 	}
