@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.UUID;
@@ -12,6 +13,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -92,6 +94,13 @@ public class Utils {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public static <T> List<Class<T>> getClassesOf(SourPlugin instance, Class<T> type, String... basePackages) {
+		return Arrays.stream(basePackages)
+				.map(basePackage -> getClassesOf(instance, basePackage, type))
+				.flatMap(list -> list.stream())
+				.collect(Collectors.toList());
 	}
 
 	@SuppressWarnings("unchecked")
