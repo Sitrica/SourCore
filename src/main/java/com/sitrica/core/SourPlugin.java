@@ -6,6 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.sitrica.core.command.CommandHandler;
+import com.sitrica.core.manager.Manager;
 import com.sitrica.core.messaging.Formatting;
 
 public abstract class SourPlugin extends JavaPlugin {
@@ -37,6 +39,20 @@ public abstract class SourPlugin extends JavaPlugin {
 		if (getConfig().getBoolean("debug"))
 			consoleMessage("&b" + string);
 	}
+
+	/**
+	 * Grab a Manager by it's class and create it if not present.
+	 * 
+	 * @param <T> <T extends Manager>
+	 * @param expected The expected Class that extends Manager.
+	 * @return The Manager that matches the defined class.
+	 */
+	public abstract <T extends Manager> T getManager(Class<T> expected);
+
+	/**
+	 * @return The CommandManager allocated to the plugin.
+	 */
+	public abstract CommandHandler getCommandHandler();
 
 	/**
 	 * @return The package names where managers exist to be registered.
