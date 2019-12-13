@@ -212,7 +212,7 @@ public class ItemStackBuilder {
 	}
 
 	/**
-	 * Sends the final product of the builder.
+	 * Grab the final ItemStack built from the builder.
 	 */
 	public ItemStack build() {
 		if (section == null) {
@@ -268,7 +268,7 @@ public class ItemStackBuilder {
 				if (attribute == null)
 					continue;
 				double level = attributeSection.getDouble(name);
-				AttributeModifier modifier = new AttributeModifier("DeadByCraft", level, AttributeModifier.Operation.MULTIPLY_SCALAR_1);
+				AttributeModifier modifier = new AttributeModifier(instance.getName(), level, AttributeModifier.Operation.MULTIPLY_SCALAR_1);
 				meta.addAttributeModifier(attribute, modifier);
 				meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 			}
