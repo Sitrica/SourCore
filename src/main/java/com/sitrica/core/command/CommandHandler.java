@@ -6,10 +6,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 
 import com.sitrica.core.SourPlugin;
@@ -21,16 +21,13 @@ import com.sitrica.core.utils.Utils;
 public class CommandHandler implements CommandExecutor {
 
 	private final List<AbstractCommand> commands = new ArrayList<>();
-	private final List<String> aliases = new ArrayList<>();
-	private final PluginCommand command;
+	private final Class<? extends AbstractCommand> main;
 	private final SourPlugin instance;
 
-	public CommandHandler(SourPlugin instance, String mainCommand, String... commandPackages) {
-		command = instance.getCommand(mainCommand);
-		aliases.addAll(command.getAliases());
-		aliases.add(mainCommand);
+	public CommandHandler(SourPlugin instance, Class<? extends AbstractCommand> main, String... commandPackages) {
+		Validate.notNull(main);
+		this.main = main;
 		this.instance = instance;
-		command.setExecutor(this);
 		Utils.getClassesOf(instance, AbstractCommand.class, commandPackages).forEach(clazz -> {
 			try {
 				commands.add(clazz.getConstructor(SourPlugin.class).newInstance(instance));
@@ -42,10 +39,9 @@ public class CommandHandler implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] arguments) {
-		List<String> aliases = command.getAliases();
 		for (AbstractCommand abstractCommand : commands) {
 			// It's the main command
-			if (arguments.length <= 0 && aliases.contains(label.toLowerCase())) {
+			if (arguments.length <= 0 && abstractCommand.getClass().equals(main)) {
 				processRequirements(abstractCommand, sender, arguments);
 				return true;
 			} else if (arguments.length > 0 && abstractCommand.containsCommand(arguments[0])) {
@@ -67,7 +63,7 @@ public class CommandHandler implements CommandExecutor {
 		}
 		if (command.getPermissionNodes() == null || Arrays.stream(command.getPermissionNodes()).parallel().anyMatch(permission -> sender.hasPermission(permission))) {
 			if (command instanceof AdminCommand) {
-				if (sender instanceof Player && !sender.hasPermission("deadbycraft.admin")) {
+				if (sender instanceof Player && !sender.hasPermission(instance.getName().toLowerCase() + ".admin")) {
 					new MessageBuilder(instance, "messages.no-permission").send(sender);
 					return;
 				}

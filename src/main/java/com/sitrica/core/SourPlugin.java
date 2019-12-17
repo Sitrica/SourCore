@@ -12,7 +12,7 @@ import com.sitrica.core.messaging.Formatting;
 
 public abstract class SourPlugin extends JavaPlugin {
 
-	private final String[] managerPackages;
+	private String[] managerPackages;
 	private final String prefix;
 
 	/**
@@ -20,6 +20,8 @@ public abstract class SourPlugin extends JavaPlugin {
 	 */
 	public SourPlugin(String prefix, String... managerPackages) {
 		this.managerPackages = managerPackages;
+		if (managerPackages == null)
+			this.managerPackages = new String[] {"com.sitrica." + getName().toLowerCase() + ".managers"};
 		this.prefix = prefix;
 	}
 
