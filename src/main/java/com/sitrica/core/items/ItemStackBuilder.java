@@ -64,7 +64,6 @@ public class ItemStackBuilder {
 	 * @return The ItemStackBuilder for chaining.
 	 */
 	public ItemStackBuilder withPlaceholder(Object placeholderObject, Placeholder<?> placeholder) {
-		this.defaultPlaceholderObject = placeholderObject;
 		placeholders.put(placeholder, placeholderObject);
 		return this;
 	}
@@ -202,9 +201,8 @@ public class ItemStackBuilder {
 				if (placeholder instanceof SimplePlaceholder) {
 					SimplePlaceholder simple = (SimplePlaceholder) placeholder;
 					input = input.replaceAll(Pattern.quote(syntax), simple.get());
-				} else if (defaultPlaceholderObject != null) {
-					if (placeholder.getType().isAssignableFrom(defaultPlaceholderObject.getClass()))
-						input = input.replaceAll(Pattern.quote(syntax), placeholder.replace_i(defaultPlaceholderObject));
+				} else if (defaultPlaceholderObject != null && placeholder.getType().isAssignableFrom(defaultPlaceholderObject.getClass())) {
+					input = input.replaceAll(Pattern.quote(syntax), placeholder.replace_i(defaultPlaceholderObject));
 				}
 			}
 		}

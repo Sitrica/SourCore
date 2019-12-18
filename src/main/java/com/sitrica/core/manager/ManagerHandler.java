@@ -39,6 +39,7 @@ public class ManagerHandler {
 			}
 		}
 		for (Manager manager : managers) {
+			manager.afterInitialize();
 			if (!manager.hasListener())
 				continue;
 			try {
@@ -59,7 +60,6 @@ public class ManagerHandler {
 		try {
 			T manager = clazz.newInstance();
 			externalManagers.add(manager);
-			return manager;
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
@@ -75,7 +75,6 @@ public class ManagerHandler {
 		try {
 			M manager = clazz.newInstance();
 			managers.add(manager);
-			return manager;
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}

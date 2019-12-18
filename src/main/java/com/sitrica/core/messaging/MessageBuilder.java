@@ -117,7 +117,6 @@ public class MessageBuilder {
 	 * @return The MessageBuilder for chaining.
 	 */
 	public MessageBuilder withPlaceholder(Object placeholderObject, Placeholder<?> placeholder) {
-		this.defaultPlaceholderObject = placeholderObject;
 		placeholders.put(placeholder, placeholderObject);
 		return this;
 	}

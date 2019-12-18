@@ -1,12 +1,16 @@
 package com.sitrica.core.placeholders;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
-import java.util.TreeSet;
+
+import com.google.common.collect.Lists;
 
 public class Placeholders {
 
-	private static TreeSet<Placeholder<?>> placeholders = new TreeSet<>(Comparator.comparing(Placeholder::getPriority));
+	private static final List<Placeholder<?>> placeholders = new ArrayList<>();
 
 	public static void registerPlaceholder(Placeholder<?> placeholder) {
 		placeholders.add(placeholder);
@@ -30,8 +34,10 @@ public class Placeholders {
 		return Optional.empty();
 	}
 
-	public static TreeSet<Placeholder<?>> getPlaceholders() {
-		return placeholders;
+	public static List<Placeholder<?>> getPlaceholders() {
+		List<Placeholder<?>> alternative = Lists.newArrayList(placeholders);
+		Collections.sort(alternative, Comparator.comparing(Placeholder::getPriority));
+		return alternative;
 	}
 
 }

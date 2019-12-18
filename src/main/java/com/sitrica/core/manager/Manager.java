@@ -102,4 +102,6 @@ public abstract class Manager implements Listener {
 		return listener;
 	}
 
+	public void afterInitialize() {}
+
 }

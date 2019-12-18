@@ -101,7 +101,6 @@ public class ListMessageBuilder {
 	 * @return The ListMessageBuilder for chaining.
 	 */
 	public ListMessageBuilder withPlaceholder(Object placeholderObject, Placeholder<?> placeholder) {
-		this.defaultPlaceholderObject = placeholderObject;
 		placeholders.put(placeholder, placeholderObject);
 		return this;
 	}
