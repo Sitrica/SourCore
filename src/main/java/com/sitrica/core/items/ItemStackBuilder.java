@@ -145,6 +145,13 @@ public class ItemStackBuilder {
 		return this;
 	}
 
+	public ItemStackBuilder withAdditionalLoresIf(boolean boo, Collection<String> lores) {
+		if (!boo)
+			return this;
+		this.additionalLores.addAll(lores);
+		return this;
+	}
+
 	public ItemStackBuilder glowingIf(boolean glowing) {
 		glowingIf(() -> glowing);
 		return this;
@@ -268,7 +275,19 @@ public class ItemStackBuilder {
 				double level = attributeSection.getDouble(name);
 				AttributeModifier modifier = new AttributeModifier(instance.getName(), level, AttributeModifier.Operation.MULTIPLY_SCALAR_1);
 				meta.addAttributeModifier(attribute, modifier);
-				meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+			}
+		}
+		if (section.isList("itemflags")) {
+			for (String string : section.getStringList("itemflags")) {
+				ItemFlag flag;
+				try {
+					flag = ItemFlag.valueOf(string.toUpperCase(Locale.US));
+				} catch (Exception e) {
+					continue;
+				}
+				if (flag == null)
+					continue;
+				meta.addItemFlags(flag);
 			}
 		}
 		// Sets the itemMeta
