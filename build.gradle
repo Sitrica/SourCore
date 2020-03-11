@@ -76,7 +76,7 @@ publishing {
 		gpr(MavenPublication) {
 			version = project.property("version")
 			groupId = 'com.sitrica'
-			artifactId = 'core'
+			artifactId = 'core' // Don't modify
 			from(components.java)
 		}
 	}

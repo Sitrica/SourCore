@@ -1,4 +1,4 @@
-package com.sitrica.core.serializers;
+package com.sitrica.core.database.serializers;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.InvalidConfigurationException;
