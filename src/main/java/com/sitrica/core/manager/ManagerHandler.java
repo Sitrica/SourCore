@@ -7,11 +7,7 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.IllegalPluginAccessException;
-import org.bukkit.plugin.PluginManager;
-
 import com.sitrica.core.SourPlugin;
-import com.sitrica.core.manager.external.CitizensManager;
-import com.sitrica.core.manager.external.HolographicDisplaysManager;
 import com.sitrica.core.utils.Utils;
 
 public class ManagerHandler {
@@ -20,11 +16,6 @@ public class ManagerHandler {
 	private final List<Manager> managers = new ArrayList<>();
 
 	public ManagerHandler(SourPlugin instance) {
-		PluginManager pluginManager = instance.getServer().getPluginManager();
-		if (pluginManager.isPluginEnabled("Citizens"))
-			externalManagers.add(new CitizensManager(instance));
-		if (pluginManager.isPluginEnabled("HolographicDisplays"))
-			externalManagers.add(new HolographicDisplaysManager(instance));
 		for (String packageName : instance.getManagerPackages()) {
 			for (Class<Manager> clazz : Utils.getClassesOf(instance, packageName, Manager.class)) {
 				if (clazz == Manager.class)

@@ -56,6 +56,10 @@ public class SoundPlayer {
 				.collect(Collectors.toList());
 	}
 
+	public void playAt(Collection<Location> locations) {
+		playAt(locations.toArray(new Location[locations.size()]));		
+	}
+
 	public void playAt(Location... locations) {
 		if (sounds.isEmpty())
 			return;
@@ -67,6 +71,10 @@ public class SoundPlayer {
 				}
 			}, sound.getDelay());
 		}
+	}
+
+	public void playTo(Collection<Player> players) {
+		playTo(players.toArray(new Player[players.size()]));		
 	}
 
 	public void playTo(Player... player) {
