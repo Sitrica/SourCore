@@ -40,7 +40,7 @@ public class ManagerHandler {
 				e.printStackTrace();
 			}
 		}
-		Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
+		Bukkit.getScheduler().runTaskLater(instance, () -> {
 			for (Manager manager : managers)
 				manager.afterInitialize();
 		}, 1);
@@ -55,6 +55,7 @@ public class ManagerHandler {
 		try {
 			T manager = clazz.newInstance();
 			externalManagers.add(manager);
+			return manager;
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
