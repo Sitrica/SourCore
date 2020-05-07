@@ -8,4 +8,8 @@ public abstract class AdminCommand extends AbstractCommand {
 		super(instance, console, commands);
 	}
 
+	protected AdminCommand(SourPlugin instance, String aliases, boolean console, String... commands) {
+		super(instance, aliases, console, commands);
+	}
+
 }

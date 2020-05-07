@@ -22,6 +22,7 @@ public class ManagerHandler {
 					continue;
 				try {
 					managers.add(clazz.newInstance());
+					instance.debugMessage("Registered manager " + clazz.getName());
 				} catch (InstantiationException | IllegalAccessException e) {
 					instance.consoleMessage("&dManager " + clazz.getName() + " doesn't have a nullable constructor.");
 					e.printStackTrace();

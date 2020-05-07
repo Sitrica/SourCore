@@ -35,6 +35,11 @@ public class CommandHandler implements CommandExecutor {
 				e.printStackTrace();
 			}
 		});
+		for (AbstractCommand command : commands) {
+			String aliases = command.getAliases();
+			if (aliases != null)
+				instance.getCommand(command.getAliases()).setExecutor(new AliasesProcessor(instance, command));
+		}
 	}
 
 	@Override
@@ -42,10 +47,16 @@ public class CommandHandler implements CommandExecutor {
 		for (AbstractCommand abstractCommand : commands) {
 			// It's the main command
 			if (arguments.length <= 0 && abstractCommand.getClass().equals(main)) {
-				processRequirements(abstractCommand, sender, arguments);
+				String[] array = arguments;
+				if (arguments.length > 0)
+					array = Arrays.copyOfRange(arguments, 1, arguments.length);
+				processRequirements(abstractCommand, arguments.length > 0 ? arguments[0] : label, sender, array);
 				return true;
 			} else if (arguments.length > 0 && abstractCommand.containsCommand(arguments[0])) {
-				processRequirements(abstractCommand, sender, arguments);
+				String[] array = arguments;
+				if (arguments.length > 0)
+					array = Arrays.copyOfRange(arguments, 1, arguments.length);
+				processRequirements(abstractCommand, arguments.length > 0 ? arguments[0] : label, sender, array);
 				return true;
 			}
 		}
@@ -53,7 +64,7 @@ public class CommandHandler implements CommandExecutor {
 		return true;
 	}
 
-	private void processRequirements(AbstractCommand command, CommandSender sender, String[] arguments) {
+	protected void processRequirements(AbstractCommand command, String label, CommandSender sender, String[] arguments) {
 		if (!(sender instanceof Player) && !command.isConsoleAllowed()) {
 			 new MessageBuilder(instance, "messages.must-be-player")
 			 		.replace("%command%", command.getSyntax(sender))
@@ -68,13 +79,7 @@ public class CommandHandler implements CommandExecutor {
 					return;
 				}
 			}
-			String[] array = arguments;
-			String entered = instance.getName().toLowerCase();
-			if (arguments.length > 0) {
-				entered = array[0];
-				array = Arrays.copyOfRange(arguments, 1, arguments.length);
-			}
-			ReturnType returnType = command.runCommand(entered, sender, array);
+			ReturnType returnType = command.runCommand(label, sender, arguments);
 			if (returnType == ReturnType.SYNTAX_ERROR) {
 				 new MessageBuilder(instance, "messages.invalid-command", "messages.invalid-command-correction")
 				 		.replace("%command%", command.getSyntax(sender))

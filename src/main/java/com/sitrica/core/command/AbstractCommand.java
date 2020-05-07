@@ -12,12 +12,22 @@ public abstract class AbstractCommand {
 	protected final SourPlugin instance;
 	private final String[] commands;
 	private final boolean console;
+	private String aliases;
 
 	protected AbstractCommand(SourPlugin instance, boolean console, String... commands) {
 		this.messages = instance.getConfiguration("messages").get();
 		this.instance = instance;
 		this.commands = commands;
 		this.console = console;
+	}
+
+	protected AbstractCommand(SourPlugin instance, String aliases, boolean console, String... commands) {
+		this(instance, console, commands);
+		this.aliases = aliases;
+	}
+
+	public String getAliases() {
+		return aliases;
 	}
 
 	protected enum ReturnType {
@@ -42,7 +52,7 @@ public abstract class AbstractCommand {
 		return commands;
 	}
 
-	protected abstract ReturnType runCommand(String command, CommandSender sender, String... arguments);
+	public abstract ReturnType runCommand(String label, CommandSender sender, String... arguments);
 
 	public abstract String getConfigurationNode();
 

@@ -34,7 +34,7 @@ public abstract class SourPlugin extends JavaPlugin {
 	public abstract Optional<FileConfiguration> getConfiguration(String name);
 
 	public void consoleMessage(String string) {
-		Bukkit.getConsoleSender().sendMessage(Formatting.color(prefix + string));
+		Bukkit.getConsoleSender().sendMessage(Formatting.color(prefix + " " + string));
 	}
 
 	public void debugMessage(String string) {

@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -164,10 +165,13 @@ public class ItemStackBuilder {
 	 * @return The ItemStackBuilder for chaining.
 	 */
 	public ItemStackBuilder glowingIf(Supplier<Boolean> glowing) {
-		if (section == null)
+		if (section == null) {
+			if (node == null)
+				Validate.notNull(node, "node can't be null in ItemStackBuilder in the glowingIf");
 			section = instance.getConfiguration("inventories")
 					.orElse(instance.getConfig())
 					.getConfigurationSection(node);
+		}
 		if (!section.getBoolean("glowing", true))
 			return this;
 		this.glowing = glowing.get();
