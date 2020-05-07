@@ -41,6 +41,16 @@ public class ItemStackBuilder {
 	private boolean glowing;
 	private String node;
 
+	public ItemStackBuilder(ItemStackBuilder copy) {
+		this.placeholders.putAll(copy.placeholders);
+		this.additionalLores.addAll(copy.additionalLores);
+		this.defaultPlaceholderObject = copy.defaultPlaceholderObject;
+		this.section = copy.section;
+		this.instance = copy.instance;
+		this.glowing = copy.glowing;
+		this.node = copy.node;
+	}
+
 	public ItemStackBuilder(SourPlugin instance, String node) {
 		this.instance = instance;
 		this.node = node;
@@ -67,6 +77,10 @@ public class ItemStackBuilder {
 	public ItemStackBuilder withPlaceholder(Object placeholderObject, Placeholder<?> placeholder) {
 		placeholders.put(placeholder, placeholderObject);
 		return this;
+	}
+
+	public ItemStackBuilder clone() {
+		return new ItemStackBuilder(this);
 	}
 
 	/**
