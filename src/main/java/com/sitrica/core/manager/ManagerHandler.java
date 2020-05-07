@@ -31,7 +31,6 @@ public class ManagerHandler {
 			}
 		}
 		for (Manager manager : managers) {
-			manager.afterInitialize();
 			if (!manager.hasListener())
 				continue;
 			try {
@@ -41,6 +40,10 @@ public class ManagerHandler {
 				e.printStackTrace();
 			}
 		}
+		Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
+			for (Manager manager : managers)
+				manager.afterInitialize();
+		}, 1);
 	}
 
 	@SuppressWarnings("unchecked")
