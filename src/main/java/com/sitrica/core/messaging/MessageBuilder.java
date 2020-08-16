@@ -10,6 +10,9 @@ import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -28,13 +31,15 @@ public class MessageBuilder {
 	private final SourPlugin instance;
 	private Object defaultPlaceholderObject;
 	private ConfigurationSection section;
-	private String complete;
+	private ClickEvent clickEvent;
+	private HoverEvent hoverEvent;
+	private TextComponent complete;
 	private String[] nodes;
 	private boolean prefix;
 
 	/**
 	 * Creates a MessageBuilder with the defined nodes..
-	 * 
+	 *
 	 * @param nodes The configuration nodes from the messages.yml
 	 */
 	public MessageBuilder(SourPlugin instance, String... nodes) {
@@ -45,7 +50,7 @@ public class MessageBuilder {
 
 	/**
 	 * Creates a MessageBuilder from the defined ConfigurationSection.
-	 * 
+	 *
 	 * @param node The configuration nodes from the ConfigurationSection.
 	 * @param section The ConfigurationSection to read from.
 	 */
@@ -56,7 +61,7 @@ public class MessageBuilder {
 
 	/**
 	 * Creates a MessageBuilder with the defined nodes, and if it should contain the prefix.
-	 * 
+	 *
 	 * @param prefix The boolean to enable or disable prefixing this message.
 	 * @param nodes The configuration nodes from the messages.yml
 	 */
@@ -90,7 +95,7 @@ public class MessageBuilder {
 	/**
 	 * Set the players to send this message to.
 	 *
-	 * @param senders The Players... to send the message to.
+	 * @param players The Players... to send the message to.
 	 * @return The MessageBuilder for chaining.
 	 */
 	public MessageBuilder toPlayers(Player... players) {
@@ -101,7 +106,7 @@ public class MessageBuilder {
 	/**
 	 * Set the players to send this message to.
 	 *
-	 * @param senders The Collection<Player> to send the message to.
+	 * @param players The Collection<Player> to send the message to.
 	 * @return The MessageBuilder for chaining.
 	 */
 	public MessageBuilder toPlayers(Collection<? extends Player> players) {
@@ -111,7 +116,7 @@ public class MessageBuilder {
 
 	/**
 	 * Add a placeholder to the MessageBuilder.
-	 * 
+	 *
 	 * @param placeholderObject The object to be determined in the placeholder.
 	 * @param placeholder The actual instance of the Placeholder.
 	 * @return The MessageBuilder for chaining.
@@ -123,8 +128,8 @@ public class MessageBuilder {
 
 	/**
 	 * Set the configuration to read from, by default is the messages.yml
-	 * 
-	 * @param configuration The FileConfiguration to read from.
+	 *
+	 * @param section The FileConfiguration to read from.
 	 * @return The MessageBuilder for chaining.
 	 */
 	public MessageBuilder fromConfiguration(ConfigurationSection section) {
@@ -134,9 +139,10 @@ public class MessageBuilder {
 
 	/**
 	 * Created a list replacement and ignores the placeholder object.
-	 * 
+	 *
 	 * @param syntax The syntax to check within the messages e.g: %command%
-	 * @param replacement The replacement e.g: the command.
+	 * @param collection The collection.
+	 * @param mapper The mapper.
 	 * @return The MessageBuilder for chaining.
 	 */
 	public <T> MessageBuilder replace(String syntax, Collection<T> collection, Function<T, String> mapper) {
@@ -146,7 +152,7 @@ public class MessageBuilder {
 
 	/**
 	 * Created a single replacement and ignores the placeholder object.
-	 * 
+	 *
 	 * @param syntax The syntax to check within the messages e.g: %command%
 	 * @param replacement The replacement e.g: the command.
 	 * @return The MessageBuilder for chaining.
@@ -163,7 +169,7 @@ public class MessageBuilder {
 
 	/**
 	 * Created a single replacement and ignores the placeholder object with priority.
-	 * 
+	 *
 	 * @param priority The priority of the placeholder.
 	 * @param syntax The syntax to check within the messages e.g: %command%
 	 * @param replacement The replacement e.g: the command.
@@ -192,7 +198,7 @@ public class MessageBuilder {
 
 	/**
 	 * Set the placeholder object, good if you want to allow multiple placeholders.
-	 * 
+	 *
 	 * @param object The object to set
 	 * @return The MessageBuilder for chaining.
 	 */
@@ -203,7 +209,7 @@ public class MessageBuilder {
 
 	/**
 	 * Sends the message as an actionbar to the defined players.
-	 * 
+	 *
 	 * @param players the players to send to
 	 */
 	public void sendActionbar(Player... players) {
@@ -212,7 +218,7 @@ public class MessageBuilder {
 
 	/**
 	 * Sends the message as a title to the defined players.
-	 * 
+	 *
 	 * @param players the players to send to
 	 */
 	public void sendTitle(Player... players) {
@@ -236,14 +242,14 @@ public class MessageBuilder {
 	/**
 	 * Completes and returns the final product of the builder.
 	 */
-	public String get() {
+	public TextComponent get() {
 		if (section == null)
 			section = instance.getConfiguration("messages").orElse(instance.getConfig());
 		if (prefix)
-			complete = Formatting.messagesPrefixed(instance, section, nodes);
+			complete = new TextComponent(Formatting.messagesPrefixed(instance, section, nodes).trim());
 		else
-			complete = Formatting.messages(section, nodes);
-		complete = applyPlaceholders(complete);
+			complete = new TextComponent(Formatting.messages(section, nodes).trim());
+		complete = new TextComponent(applyPlaceholders(complete.getText()).trim());
 		return complete;
 	}
 
@@ -293,7 +299,7 @@ public class MessageBuilder {
 
 	/**
 	 * Sends the final product of the builder as a title if the players using toPlayers are set.
-	 * 
+	 *
 	 * WARNING: The title method needs to have the following as a configuration, this is special.
 	 * title:
 	 * 	  enabled: false
@@ -335,13 +341,32 @@ public class MessageBuilder {
 	 */
 	public void sendActionbar() {
 		get();
-		complete = complete.replaceAll("\n", "");
+		complete = new TextComponent(complete.getText().replaceAll("\n", ""));
 		if (senders != null && senders.size() > 0) {
 			for (CommandSender sender : senders) {
 				if (sender instanceof Player)
-					Actionbar.sendActionBar((Player)sender, complete);
+					Actionbar.sendActionBar((Player)sender, complete.getText());
 			}
 		}
+	}
+
+	/**
+	 * Adds a click event for the message
+	 * @param hoverEvent The hover event.
+	 * @return The MessageBuilder for chaining.
+	 */
+	public MessageBuilder setHoverEvent(HoverEvent hoverEvent) {
+		this.hoverEvent = hoverEvent;
+		return this;
+	}
+
+	/**
+	 * @param clickEvent The click event.
+	 * @return The MessageBuilder for chaining.
+	 */
+	public MessageBuilder setClickEvent(ClickEvent clickEvent) {
+		this.clickEvent = clickEvent;
+		return this;
 	}
 
 	/**
@@ -349,15 +374,17 @@ public class MessageBuilder {
 	 */
 	public void send() {
 		get();
+		if (clickEvent != null) complete.setClickEvent(clickEvent);
+		if (hoverEvent != null) complete.setHoverEvent(hoverEvent);
 		if (!senders.isEmpty()) {
 			for (CommandSender sender : senders)
-				sender.sendMessage(complete);
+				sender.spigot().sendMessage(complete);
 		}
 	}
 
 	@Override
 	public String toString() {
-		return get();
+		return get().getText();
 	}
 
 }
