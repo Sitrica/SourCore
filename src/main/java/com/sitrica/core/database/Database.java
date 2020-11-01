@@ -38,6 +38,8 @@ public abstract class Database<T> {
 				.create();
 	}
 
+	public abstract void close();
+
 	public abstract void put(String key, T value);
 
 	public abstract T get(String key, T def);

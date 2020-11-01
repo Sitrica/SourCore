@@ -15,7 +15,7 @@ import com.google.gson.JsonSyntaxException;
 public class MySQLDatabase<T> extends Database<T> {
 
 	private final String tablename;
-	private Connection connection;
+	private final Connection connection;
 	private final Type type;
 
 	public MySQLDatabase(String host, String dbname, String tablename, String username, String password, Type type, Map<Type, Serializer<?>> serializers) throws SQLException {
@@ -51,6 +51,15 @@ public class MySQLDatabase<T> extends Database<T> {
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	@Override
+	public void close() {
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

@@ -21,7 +21,7 @@ import com.sitrica.core.SourPlugin;
 public class H2Database<T> extends Database<T> {
 
 	private final String tablename;
-	private Connection connection;
+	private final Connection connection;
 	private final Type type;
 
 	public H2Database(SourPlugin instance, String tablename, Type type, Map<Type, Serializer<?>> serializers) throws SQLException, ClassNotFoundException {
@@ -71,6 +71,15 @@ public class H2Database<T> extends Database<T> {
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	@Override
+	public void close() {
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
